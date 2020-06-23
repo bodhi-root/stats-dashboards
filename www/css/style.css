@@ -1,0 +1,117 @@
+/* Custom page CSS
+-------------------------------------------------- */
+/* Not required for template or sticky footer method. */
+
+main > .container {
+  padding: 60px 15px 0;
+}
+
+.footer {
+  background-color: #f5f5f5;
+}
+
+.footer > .container {
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+code {
+  font-size: 80%;
+}
+
+/* my stuff */
+
+main {
+  padding-bottom: 50px;
+}
+
+h3 {
+  font-size: 100%;
+  font-style: italic;
+  font-weight: bold;
+}
+
+.stats-table-value {
+  text-align: right;
+  font-weight: bold;
+  margin-left: 8px;
+}
+.stats-table-value-header {
+  text-align: right;
+  margin-left: 8px;
+}
+
+.split-container {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.split-container-item {
+  width: 250px;
+  margin-right: 60px;
+}
+.split-container-item:last-child {
+  margin-right: 0;
+}
+
+.split-container-item table {
+  width: 100%;
+}
+
+.locality-test-table th {
+  font-style: italic;
+}
+
+.locality-test-table td {
+  white-space: nowrap;
+}
+
+.locality-test-table th:nth-of-type(3),
+.locality-test-table th:nth-of-type(5) {
+  text-align: right;
+}
+
+.locality-test-table td:nth-of-type(2) {
+  text-align: right;
+  padding-left: 40px;
+}
+.locality-test-table td:nth-of-type(3),
+.locality-test-table td:nth-of-type(5) {
+  padding-left: 20px;
+}
+.locality-test-table td:nth-of-type(4) {
+  text-align: left;
+  padding-left: 40px;
+}
+
+/* tooltips (from: https://www.w3schools.com/css/css_tooltip.asp) */
+
+.stats-tooltip {
+  position: relative;
+  display: inline-block;
+  /*border-bottom: 1px dotted black;*/ /* If you want dots under the hoverable text */
+}
+
+.stats-tooltip .stats-tooltiptext {
+  visibility: hidden;
+  width: 350px;
+  background-color: black;
+  color: #fff;
+  text-align: left;
+  padding: 5px 10px;
+  border-radius: 6px;
+
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+
+  /* fix some styles we set in th */
+  font-weight: normal;
+  font-style: normal;
+  white-space: normal;
+}
+
+.stats-tooltip:hover .stats-tooltiptext {
+  visibility: visible;
+}

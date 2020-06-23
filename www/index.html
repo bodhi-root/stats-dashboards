@@ -1,0 +1,477 @@
+
+<!doctype html>
+<html lang="en" class="h-100">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Univariate statistics calculator">
+  <meta name="author" content="Daniel Rogers">
+
+  <title>Univariate Statistics</title>
+
+   {{ headContent() }}
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+        crossorigin="anonymous">
+
+  <style>
+    /* empty */
+  </style>
+
+  <!-- Custom styles for this template -->
+  <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body class="d-flex flex-column h-100">
+
+  <header>
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+      <a class="navbar-brand" href="#">Univariate Statistics</a>
+    </nav>
+  </header>
+
+  <!-- Begin page content -->
+  <main role="main" class="flex-shrink-0">
+
+  <div class="container">
+    <h2>Overview</h2>
+    <p>This page provides a simple tool for entering your univariate data (a set of numbers) and performing basic statistical calculations for them.  The output is based upon the output of the PROC UNIVARIATE function in SAS.  Special thanks to the UCLA Statistics Department whose <a href="https://stats.idre.ucla.edu/sas/output/proc-univariate/">annotated page on this function's output</a> was used to embed tooltips for the various statistics</p>
+
+    <h2>Input Data</h2>
+    <p>
+      Enter a series of values and click "Submit" to perform basic Statistical
+      analysis of the series.
+    </p>
+    <div>
+      <textarea name="INPUT_DATA" rows="8", cols="80" placeholder="Enter comma-separated or space-separated values..."></textarea>
+    </div>
+    <div>
+      {{ actionButton("SUBMIT", "Submit", class="btn-dark") }}
+    </div>
+
+    <hr />
+
+    <h2>Histogram</h2>
+    <div id="PLOT_HISTOGRAM" class="shiny-plot-output" style="width: 100%; height: 350px"></div>
+    <div id="PLOT_BOX" class="shiny-plot-output" style="width: 100%; height: 250px"></div>
+    <hr />
+
+    <!--
+                               Moments
+    N                         200    Sum Weights                200
+    Mean                   52.775    Sum Observations         10555
+    Std Deviation      9.47858602    Variance             89.843593
+    Skewness           -0.4820386    Kurtosis            -0.7502476
+    Uncorrected SS         574919    Corrected SS         17878.875
+    Coeff Variation    17.9603714    Std Error Mean      0.67023725
+    -->
+
+    <h2>Moments</h2>
+    <div class="split-container">
+
+      <div class="split-container-item">
+
+        <table>
+          <tbody>
+            <tr>
+              <td>
+                <div class="stats-tooltip">
+                  <span>N</span>
+                  <span class="stats-tooltiptext">Number of valid observations in the data</span>
+                </div>
+              </td>
+              <td id="STATS_N" class="shiny-text-output stats-table-value"></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="stats-tooltip">
+                  <span>Mean</span>
+                  <span class="stats-tooltiptext">The arithmetic mean across the observations. It is the most widely used measure of central tendency. It is commonly called the "average". The mean is sensitive to extremely large or small values.</span>
+                </td>
+              <td id="STATS_MEAN" class="shiny-text-output stats-table-value"></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="stats-tooltip">
+                  <span>Std Deviation</span>
+                  <span class="stats-tooltiptext">Standard deviation is the square root of the variance.  It measures the spread of a set of observations.  The larger the standard deviation is, the more spread out the observations are.</span>
+                </td>
+              <td id="STATS_STD_DEVIATION" class="shiny-text-output stats-table-value"></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="stats-tooltip">
+                  <span>Skewness</span>
+                  <span class="stats-tooltiptext">Skewness measures the degree and direction of asymmetry.  A symmetric distribution such as a normal distribution has a skewness of 0, and a distribution that is skewed to the left, e.g. when the mean is less than the median, has a negative skewness.</span>
+                </div>
+              </td>
+              <td id="STATS_SKEWNESS" class="shiny-text-output stats-table-value"></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="stats-tooltip">
+                  <span>Uncorrected SS</span>
+                  <span class="stats-tooltiptext">The sum of squared data values.</span>
+                </div>
+              </td>
+              <td id="STATS_UNCORRECTED_SS" class="shiny-text-output stats-table-value"></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="stats-tooltip">
+                  <span>Coeff Variation</span>
+                  <span class="stats-tooltiptext">The coefficient of variation is another way of measuring variability. It is a unitless measure. It is defined as the ratio of the standard deviation to the mean and is generally expressed as a percentage. It is useful for comparing variation between different variables.</span>
+                </div>
+              </td>
+              <td id="STATS_COEFF_VARIATION" class="shiny-text-output stats-table-value"></td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+      <div class="split-container-item">
+
+        <table>
+          <tbody>
+            <tr>
+              <td><!--Sum Weights--></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="stats-tooltip">
+                  <span>Sum Observations</span>
+                  <span class="stats-tooltiptext">The sum of the observations.</span>
+                </div>
+              </td>
+              <td id="STATS_SUM" class="shiny-text-output stats-table-value"></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="stats-tooltip">
+                  <span>Variance</span>
+                  <span class="stats-tooltiptext">The variance is a measure of variability. It is the sum of the squared distances of data value from the mean divided by the variance divisor (N-1 since we are estimating variance).</span>
+                </div>
+              </td>
+              <td id="STATS_VARIANCE" class="shiny-text-output stats-table-value"></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="stats-tooltip">
+                  <span>Kurtosis</span>
+                  <span class="stats-tooltiptext">Kurtosis is a measure of the heaviness of the tails of a distribution.  There are multiple formulas for Kurtosis.  We use the one from SAS where the normal distribution is defined as having zero kurtosis.</span>
+                </div>
+              </td>
+              <td id="STATS_KURTOSIS" class="shiny-text-output stats-table-value"></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="stats-tooltip">
+                  <span>Corrected SS</span>
+                  <span class="stats-tooltiptext">This is the sum of squared distance of data values from the mean. This number divided by the number of observations minus one gives the variance.</span>
+                </div>
+              </td>
+              <td id="STATS_CORRECTED_SS" class="shiny-text-output stats-table-value"></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="stats-tooltip">
+                  <span>Std Error Mean</span>
+                  <span class="stats-tooltiptext">This is the estimated standard deviation of the sample mean.  It is estimated as the standard deviation of the sample divided by the square root of sample size. This provides a measure of the variability of the sample mean.  The Central Limit Theorem tells us that the sample means are approximately normally distributed when the sample size is 30 or greater.</span>
+                </div>
+              </td>
+              <td id="STATS_STD_ERROR_MEAN" class="shiny-text-output stats-table-value"></td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+
+    </div>
+
+    <hr/>
+
+    <!--
+             Basic Statistical Measures
+    Location                    Variability
+    Mean     52.77500     Std Deviation            9.47859
+    Median   54.00000     Variance                89.84359
+    Mode     59.00000     Range                   36.00000
+                          Interquartile Range     14.50000
+    -->
+
+    <h2>Basic Statistical Measures</h2>
+    <div class="split-container">
+      <div class="split-container-item">
+
+        <h3>Location</h3>
+        <table>
+          <tbody>
+            <tr>
+              <td>
+                <div class="stats-tooltip">
+                  <span>Mean</span>
+                  <span class="stats-tooltiptext">The arithmetic mean across the observations. It is the most widely used measure of central tendency. It is commonly called the "average". The mean is sensitive to extremely large or small values.</span>
+                </div>
+              </td>
+              <td id="STATS_LOCATION_MEAN" class="shiny-text-output stats-table-value"></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="stats-tooltip">
+                  <span>Median</span>
+                  <span class="stats-tooltiptext">The median is a measure of central tendency.  It is the middle number when the values are arranged in ascending (or descending) order. Sometimes, the median is a better measure of central tendency than the mean.  It is less sensitive than the mean to extreme observations.</span>
+                </div>
+              </td>
+              <td id="STATS_LOCATION_MEDIAN" class="shiny-text-output stats-table-value"></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="stats-tooltip">
+                  <span>Mode</span>
+                  <span class="stats-tooltiptext">The mode is another measure of central tendency.  It is the value that occurs most frequently in the variable.  It is used most commonly when the variable is a categorical variable.</span>
+                </div>
+              </td>
+              <td id="STATS_LOCATION_MODE" class="shiny-text-output stats-table-value"></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+
+      <div class="split-container-item">
+
+        <h3>Variability</h3>
+        <table>
+          <tbody>
+            <tr>
+              <td>
+                <div class="stats-tooltip">
+                  <span>Std Deviation</span>
+                  <span class="stats-tooltiptext">Standard deviation is the square root of the variance.  It measures the spread of a set of observations.  The larger the standard deviation is, the more spread out the observations are.</span>
+                </div>
+              </td>
+              <td id="STATS_VARIABILITY_STD_DEVIATION" class="shiny-text-output stats-table-value"></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="stats-tooltip">
+                  <span>Variance</span>
+                  <span class="stats-tooltiptext">The variance is a measure of variability. It is the sum of the squared distances of data value from the mean divided by the variance divisor (N-1 since we are estimating variance).</span>
+                </div>
+              </td>
+              <td id="STATS_VARIABILITY_VARIANCE" class="shiny-text-output stats-table-value"></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="stats-tooltip">
+                  <span>Range</span>
+                  <span class="stats-tooltiptext">The range is a measure of the spread of a variable.  It is equal to the difference between the largest and the smallest observations.  It is easy to compute and easy to understand.  However, it is very insensitive to variability.</span>
+                </div>
+              </td>
+              <td id="STATS_VARIABILITY_RANGE" class="shiny-text-output stats-table-value"></td>
+            </tr>
+            <tr>
+              <td>
+                <div class="stats-tooltip">
+                  <span>Interquartile Range</span>
+                  <span class="stats-tooltiptext">The interquartile range is the difference between the upper and the lower quartiles.  It measures the spread of a data set.  It is robust to extreme observations.
+
+</span>
+                </div>
+              </td>
+              <td id="STATS_VARIABILITY_INTERQUARTILE_RANGE" class="shiny-text-output stats-table-value"></td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+
+    <hr />
+
+<!--
+Tests for Location: Mu0=0
+Test           -Statistic-        -p Value-
+Student's t    t  78.74077    Pr > |t|    <.0001
+Sign           M       100    Pr >= |M|   <.0001
+Signed Rank    S     10050    Pr >= |S|   <.0001
+-->
+
+    <h2>Test for Location (&mu;<sub>0</sub> = 0)</h2>
+    <div>
+      <table class="locality-test-table">
+        <thead>
+          <tr>
+            <th>
+              <span class="stats-tooltip">
+                <span>Test</span>
+                <span class="stats-tooltiptext">This column lists the various tests that are provided.</span>
+              </span>
+            </th>
+            <th></th>
+            <th>
+              <span class="stats-tooltip">
+                <span>Statistic</span>
+                <span class="stats-tooltiptext">This column lists the values of the test statistics.</span>
+              </span>
+            </th>
+            <th></th>
+            <th>
+              <span class="stats-tooltip">
+                <span>p Value</span>
+                <span class="stats-tooltiptext">This column lists the p-values associated with the test statistics.  A lot p-value means that we should reject the null hypothesis (that &mu;<sub>0</sub>=0), meaning the distribution is not centered at zero.</span>
+              </span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <span class="stats-tooltip">
+                <span>Student's t</span>
+                <span class="stats-tooltiptext">The Student t-test is used to test the null hypothesis that the population mean equals &mu;<sub>0</sub>.  The t-statistic is defined to be the difference between the mean and the hypotheses mean divided by the standard error of the mean.  The p-value is the two-tailed probability computed using a t distribution.</span>
+              </span>
+            </td>
+            <td>t = </td>
+            <td><span id="LOCALITY_TEST_T_STATISTIC" class="shiny-text-output stats-table-value"></span></td>
+            <td>Pr &gt; |t|</td>
+            <td><span id="LOCALITY_TEST_T_PVALUE" class="shiny-text-output stats-table-value"></span></td>
+          </tr>
+
+          <tr>
+            <td>
+              <span class="stats-tooltip">
+                <span>Sign</span>
+                <span class="stats-tooltiptext">The sign test is a simple nonparametric procedure to test the null hypothesis regarding the population median.  It does not require that the sample is drawn from a normal distribution.  It is used when we have a small sample from a nonnormal distribution.  The statistic M is defined to be M=(N<sup>+</sup>-N<sup>–</sup>)/2 where N<sup>+</sup> is the number of values that are greater than &mu;<sub>0</sub> and N<sup>-</sup> is the number of values that are less than &mu;<sub>0</sub>.  Values equal to &mu;<sub>0</sub> are discarded.  Under the hypothesis that the population median is equal to &mu;<sub>0</sub>, the sign test calculates the p-value for M using a binomial distribution.</span>
+              </span>
+            </td>
+            <td>M = </td>
+            <td><span id="LOCALITY_TEST_S_STATISTIC" class="shiny-text-output stats-table-value"></span></td>
+            <td>Pr &GreaterEqual; |M|</td>
+            <td><span id="LOCALITY_TEST_S_PVALUE" class="shiny-text-output stats-table-value"></span></td>
+          </tr>
+          <tr>
+            <td>
+              <span class="stats-tooltip">
+                <span>Signed Rank</span>
+                <span class="stats-tooltiptext">The signed rank test is also known as the Wilcoxon test.  It is used to test the null hypothesis that the population median equals &mu;<sub>0</sub>.  It assumes that the distribution of the population is symmetric.  The Wilcoxon signed rank test statistic is computed based on the rank sum and the numbers of observations that are either above or below the median. (NOTE: We calculate a statistic called "V" or sometimes "T", but the test is performed on a related statistic called "S".  Unfortunately, R does not provide that statistic natively.)</span>
+              </span>
+            </td>
+            <td>V = </td>
+            <td><span id="LOCALITY_TEST_W_STATISTIC" class="shiny-text-output stats-table-value"></span></td>
+            <td>Pr &GreaterEqual; |S|</td>
+            <td><span id="LOCALITY_TEST_W_PVALUE" class="shiny-text-output stats-table-value"></span></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <hr/>
+
+<!--
+Quantiles (Definition 5)
+Quantile      Estimate
+100% Max          67.0
+99%               67.0
+95%               65.0
+90%               65.0
+75% Q3            60.0
+50% Median        54.0
+25% Q1            45.5
+10%               39.0
+5%                35.5
+1%                31.0
+0% Min            31.0
+-->
+
+    <h2>Quantiles</h2>
+    <div class="split-container">
+      <div class="split-container-item">
+
+        <table>
+          <thead>
+            <tr>
+              <th>Quantile</th>
+              <th class="stats-table-value-header">Estimate</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>100% Max</td>
+              <td id="STATS_Q100" class="shiny-text-output stats-table-value"></td>
+            </tr>
+            <tr>
+              <td>99%</td>
+              <td id="STATS_Q99" class="shiny-text-output stats-table-value"></td>
+            </tr>
+            <tr>
+              <td>95%</td>
+              <td id="STATS_Q95" class="shiny-text-output stats-table-value"></td>
+            </tr>
+            <tr>
+              <td>90%</td>
+              <td id="STATS_Q90" class="shiny-text-output stats-table-value"></td>
+            </tr>
+            <tr>
+              <td>75% Q3</td>
+              <td id="STATS_Q75" class="shiny-text-output stats-table-value"></td>
+            </tr>
+            <tr>
+              <td>50% Median</td>
+              <td id="STATS_Q50" class="shiny-text-output stats-table-value"></td>
+            </tr>
+            <tr>
+              <td>25% Q1</td>
+              <td id="STATS_Q25" class="shiny-text-output stats-table-value"></td>
+            </tr>
+            <tr>
+              <td>10%</td>
+              <td id="STATS_Q10" class="shiny-text-output stats-table-value"></td>
+            </tr>
+            <tr>
+              <td>5%</td>
+              <td id="STATS_Q5" class="shiny-text-output stats-table-value"></td>
+            </tr>
+            <tr>
+              <td>1%</td>
+              <td id="STATS_Q1" class="shiny-text-output stats-table-value"></td>
+            </tr>
+            <tr>
+              <td>0% Min</td>
+              <td id="STATS_Q0" class="shiny-text-output stats-table-value"></td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+
+    </div>
+
+  </div>
+  </main>
+
+  <!--
+  <footer class="footer mt-auto py-3">
+    <div class="container">
+      <span class="text-muted">Place sticky footer content here.</span>
+    </div>
+  </footer>
+  -->
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+</body>
+</html>
